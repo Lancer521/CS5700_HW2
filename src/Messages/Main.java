@@ -2,6 +2,7 @@ package Messages;
 
 /**
  * Created by Ty on 9/28/2016 at 5:52 PM.
+ *
  */
 public class Main {
 
@@ -9,5 +10,6 @@ public class Main {
         Communicator communicator = new Communicator();
         communicator.addTestData();
         communicator.beginTransfer();
+        System.out.println();
     }
 }

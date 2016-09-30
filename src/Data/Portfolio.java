@@ -1,52 +1,42 @@
 package Data;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 
+import Messages.TickerMessage;
 import Utils.FileManager;
 
 /**
  * Created by Ty on 9/23/2016.
+ *
  */
 public class Portfolio extends HashMap<String, Stock> {
 
-    FileManager fileManager;
+    private FileManager fileManager;
+    private List<String> companyList;
 
-    public Portfolio newInstance(String fileName){
-        Portfolio portfolio = new Portfolio();
-
-        String data = getDataFromCSV(fileName);
-        String[] parsedData = data.split(",");
-        for(int index = 0; index < parsedData.length; index+=2){
-            Stock stock = new Stock();
-            stock.symbol = parsedData[index];
-            stock.companyName = parsedData[index+1];
-            portfolio.put(parsedData[index], stock);
-        }
-        return portfolio;
+    public Portfolio(){
+        CompanyListUtil companyListUtil = new CompanyListUtil();
+        companyList = companyListUtil.getList();
     }
 
-    public void update(){
-
-    }
-
-    private String getDataFromCSV(String fileName) {
-        String line;
-        String result = "";
-        try {
-            BufferedReader br = new BufferedReader(new FileReader(fileName));
-
-            while ((line = br.readLine()) != null) {
-                if(line.contains("\n")){
-                    line = line.replace("\n", "");
-                }
-                result += line;
+    @Override
+    public Stock put(String key, Stock value) {
+        if(companyList != null && !companyList.isEmpty()){
+            if(companyList.contains(key)) {
+                return super.put(key, value);
+            } else {
+                System.out.println(key + " is not a valid symbol");
             }
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
+        } else {
+            System.out.println("The list of symbols is corrupted");
         }
-        return result;
+        return null;
+    }
+    public void update(TickerMessage message){
+        Stock stock = this.get(message.getSymbol());
+        if(stock != null){
+            stock.update(message);
+        }
     }
 }
