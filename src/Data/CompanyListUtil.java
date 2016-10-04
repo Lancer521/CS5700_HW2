@@ -1,13 +1,12 @@
 package Data;
 
-import com.google.common.base.Splitter;
-import com.google.common.collect.Lists;
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Ty on 9/30/2016 at 10:41 AM.
@@ -16,36 +15,51 @@ import java.util.List;
 public class CompanyListUtil {
 
     List<String> companyList;
+    Map<String, String> companyMap;
     boolean isInitialized = false;
 
     public List<String> getList(){
-        return getList("C:\\Users\\Ty\\Documents\\School\\Fall_2016\\CS5700\\HW2\\src\\CompanyList.csv");
-    }
-
-    public List<String> getList(String filename){
         if(isInitialized){
             return companyList;
         }
         isInitialized = true;
-        return companyList = getDataFromCSV(filename);
+        return getList("C:\\Users\\Ty\\Documents\\School\\Fall_2016\\CS5700\\HW2\\src\\CompanyList.csv");
     }
 
+    public List<String> getList(String filename){
+        parseDataFromCSV(filename);
+        return companyList;
+    }
 
-    private List<String> getDataFromCSV(String fileName) {
+    public Map<String, String> getMap(){
+        if(isInitialized){
+            return companyMap;
+        }
+        isInitialized = true;
+        return getMap("C:\\Users\\Ty\\Documents\\School\\Fall_2016\\CS5700\\HW2\\src\\CompanyList.csv");
+    }
+
+    public Map<String, String> getMap(String filename){
+        parseDataFromCSV(filename);
+        return companyMap;
+    }
+
+    private void parseDataFromCSV(String fileName) {
         String line;
         String[] array;
-        List<String> list = new ArrayList<>();
+        companyMap = new HashMap<>();
+        companyList = new ArrayList<>();
         try {
             BufferedReader br = new BufferedReader(new FileReader(fileName));
 
             while ((line = br.readLine()) != null) {
                 array = line.split(",");
-                list.add(array[0]);
+                companyMap.put(array[1], array[0]);
+                companyList.add(array[1]);
             }
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
-        return list;
     }
 
 }

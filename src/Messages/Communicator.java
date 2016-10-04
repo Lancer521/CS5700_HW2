@@ -65,6 +65,7 @@ public class Communicator {
             startMessage.Add(entry.getKey());
         }
         Send(startMessage);
+        int count = 1;
 
         while (isMonitoring) {
             TickerMessage message = receiveTicker(1000);
@@ -72,6 +73,7 @@ public class Communicator {
                 System.out.println("The TickerMessage came back NULL");
             } else {
                 portfolio.update(message);
+                System.out.println("Updated with TickerMessage " + count++/6);
             }
         }
     }
