@@ -3,7 +3,6 @@ package Messages;
 import java.io.IOException;
 import java.net.*;
 import java.util.Map;
-import java.util.concurrent.Executors;
 
 import Data.Stock;
 import Data.Portfolio;
@@ -21,16 +20,17 @@ public class Communicator {
     private boolean isMonitoring;
     private Portfolio portfolio;
 
-    public void addTestData() {
-        portfolio = new Portfolio();
-        portfolio.put("GOOGL", new Stock());
-        portfolio.put("AMZN", new Stock());
-        portfolio.put("PIH", new Stock());
-        portfolio.put("FLWS", new Stock());
-        portfolio.put("FCCY", new Stock());
-        portfolio.put("SRCE", new Stock());
+    public Communicator(Portfolio portfolio){
+        this.portfolio = portfolio;
     }
 
+    public void updatePortfolio(Portfolio portfolio){
+        this.portfolio = portfolio;
+    }
+
+    public boolean isMonitoring(){
+        return isMonitoring;
+    }
 
     public void beginTransfer() {
         try {
@@ -65,7 +65,6 @@ public class Communicator {
             startMessage.Add(entry.getKey());
         }
         Send(startMessage);
-        int count = 1;
 
         while (isMonitoring) {
             TickerMessage message = receiveTicker(1000);
@@ -73,7 +72,6 @@ public class Communicator {
                 System.out.println("The TickerMessage came back NULL");
             } else {
                 portfolio.update(message);
-                System.out.println("Updated with TickerMessage " + count++/6);
             }
         }
     }

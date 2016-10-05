@@ -9,11 +9,7 @@ import Display.MainDisplay;
 public class Main {
 
     public static void main(String[] args){
-        Communicator communicator = new Communicator();
-        communicator.addTestData();
-        communicator.beginTransfer();
         MainDisplay display = new MainDisplay();
         display.configure();
-        System.out.println();
     }
 }

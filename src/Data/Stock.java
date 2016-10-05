@@ -10,7 +10,6 @@ import java.util.Observable;
  */
 public class Stock extends Observable {
     String symbol;
-    String companyName;
     double openingPrice;
     double closingPrice;
     double currentPrice;
@@ -21,7 +20,6 @@ public class Stock extends Observable {
 
     public void update(TickerMessage message){
         symbol = message.getSymbol();
-        //companyName;
         openingPrice = message.getOpeningPrice();
         closingPrice = message.getPreviousClosingPrice();
         currentPrice = message.getCurrentPrice();

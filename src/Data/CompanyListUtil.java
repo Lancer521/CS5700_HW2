@@ -14,22 +14,8 @@ import java.util.Map;
  */
 public class CompanyListUtil {
 
-    List<String> companyList;
-    Map<String, String> companyMap;
-    boolean isInitialized = false;
-
-    public List<String> getList(){
-        if(isInitialized){
-            return companyList;
-        }
-        isInitialized = true;
-        return getList("C:\\Users\\Ty\\Documents\\School\\Fall_2016\\CS5700\\HW2\\src\\CompanyList.csv");
-    }
-
-    public List<String> getList(String filename){
-        parseDataFromCSV(filename);
-        return companyList;
-    }
+    private Map<String, String> companyMap;
+    private boolean isInitialized = false;
 
     public Map<String, String> getMap(){
         if(isInitialized){
@@ -48,14 +34,12 @@ public class CompanyListUtil {
         String line;
         String[] array;
         companyMap = new HashMap<>();
-        companyList = new ArrayList<>();
         try {
             BufferedReader br = new BufferedReader(new FileReader(fileName));
 
             while ((line = br.readLine()) != null) {
                 array = line.split(",");
                 companyMap.put(array[1], array[0]);
-                companyList.add(array[1]);
             }
         } catch (IOException ioe) {
             ioe.printStackTrace();
