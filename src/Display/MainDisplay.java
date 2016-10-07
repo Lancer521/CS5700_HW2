@@ -20,14 +20,18 @@ public class MainDisplay implements ActionListener {
 
     private JList portfolioList;
     private JList companyList;
-    private JButton selectDisplaysButton;
     private JButton addButton;
     private JButton removeButton;
     private JPanel panelMain;
-    private JButton startMonitoringButton;
     private JButton loadPortfolioButton;
     private JButton savePortfolioButton;
     private JButton stopMonitoringButton;
+    private JPanel portfolioButtonsPanel;
+    private JPanel displayButtonsPanel;
+    private JPanel buttonsPanel;
+    private JPanel portfolioPanel;
+    private JPanel displayPanel;
+    private JButton displayButton;
 
     private Portfolio portfolio;
     private Map<String, String> companyMap;
@@ -36,8 +40,7 @@ public class MainDisplay implements ActionListener {
     private Communicator communicator;
     private FileManager fileManager;
 
-
-    public void configure(){
+    public MainDisplay(){
         JFrame frame = new JFrame("Stock Monitoring System 5000");
         frame.setContentPane(panelMain);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -48,14 +51,14 @@ public class MainDisplay implements ActionListener {
         initializeLists();
 
         portfolio = new Portfolio();
+        communicator = new Communicator(portfolio);
         fileManager = new FileManager();
 
         loadPortfolioButton.addActionListener(this);
         savePortfolioButton.addActionListener(this);
         addButton.addActionListener(this);
         removeButton.addActionListener(this);
-        selectDisplaysButton.addActionListener(this);
-        startMonitoringButton.addActionListener(this);
+        displayButton.addActionListener(this);
         stopMonitoringButton.addActionListener(this);
 
         frame.setVisible(true);
@@ -65,9 +68,7 @@ public class MainDisplay implements ActionListener {
         companyListModel = new SortedListModel();
         portfolioListModel = new SortedListModel();
 
-        for(String key : companyMap.keySet()){
-            companyListModel.add(key);
-        }
+        companyListModel.addAll(companyMap.keySet().toArray());
 
         companyList.setModel(companyListModel);
         portfolioList.setModel(portfolioListModel);
@@ -83,10 +84,8 @@ public class MainDisplay implements ActionListener {
             add();
         } else if(e.getSource() == removeButton){
             remove();
-        } else if(e.getSource() == selectDisplaysButton){
-            selectDisplays();
-        } else if(e.getSource() == startMonitoringButton){
-            startMonitoring();
+        } else if(e.getSource() == displayButton){
+            launchDisplays();
         } else if(e.getSource() == stopMonitoringButton){
             stopMonitoring();
         }
@@ -101,38 +100,37 @@ public class MainDisplay implements ActionListener {
     }
 
     private void add() {
-        String key = (String) companyList.getSelectedValue();
-        String symbol = companyMap.get(key);
-        portfolio.put(symbol, new Stock());
+        if(companyListModel.getSize() > 0) {
+            String key = (String) companyList.getSelectedValue();
+            if (key == null) {
+                System.out.println("No item was selected to be added");
+                return;
+            }
+            String symbol = companyMap.get(key);
+            portfolio.put(symbol, new Stock());
 
-        companyListModel.removeElement(key);
-        portfolioListModel.add(key + " [" + symbol + "]");
+            communicator.updatePortfolio(portfolio);
+            communicator.beginTransfer();
+
+            companyListModel.removeElement(key);
+            portfolioListModel.add(key);
+            //portfolioListModel.add(key + " [" + symbol + "]");
+        }
     }
 
     private void remove() {
-        String key = (String) portfolioList.getSelectedValue();
-        String symbol = companyMap.get(key);
-        portfolio.remove(symbol);
+        if(portfolioListModel.getSize() > 0) {
+            String key = (String) portfolioList.getSelectedValue();
 
-        portfolioListModel.removeElement(key);
-        companyListModel.add(key);
-    }
+            if (key == null) {
+                System.out.println("No item was selected to be removed");
+                return;
+            }
+            String symbol = companyMap.get(key);
+            portfolio.remove(symbol);
 
-    private void selectDisplays() {
-        System.out.println();
-    }
-
-    private void startMonitoring() {
-        if(communicator == null) {
-            communicator = new Communicator(portfolio);
-            communicator.beginTransfer();
-        } else if(communicator.isMonitoring()){
-            communicator.endTransfer();
-            communicator.updatePortfolio(portfolio);
-            communicator.beginTransfer();
-        } else {
-            communicator.updatePortfolio(portfolio);
-            communicator.beginTransfer();
+            portfolioListModel.removeElement(key);
+            companyListModel.add(key);
         }
     }
 
@@ -140,5 +138,19 @@ public class MainDisplay implements ActionListener {
         if(communicator != null && communicator.isMonitoring()){
             communicator.endTransfer();
         }
+    }
+
+    private void launchDisplays() {
+        BasicTextDisplay display = new BasicTextDisplay();
+        for(Stock stock : portfolio.values()){
+            if(stock.isHydrated){
+                display.addStockToDisplay(stock);
+            }
+        }
+        display.display();
+    }
+
+    private void closeDisplays(){
+
     }
 }

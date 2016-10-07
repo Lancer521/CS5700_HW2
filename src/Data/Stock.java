@@ -9,17 +9,22 @@ import java.util.Observable;
  *
  */
 public class Stock extends Observable {
-    String symbol;
-    double openingPrice;
-    double closingPrice;
-    double currentPrice;
-    double bidPrice;
-    double askPrice;
-    double volumeSoldToday;
-    double tenDayAverageVolume;
+
+    public String symbol;
+    public long messageTimestamp;
+    public int openingPrice;
+    public int closingPrice;
+    public int currentPrice;
+    public int bidPrice;
+    public int askPrice;
+    public int volumeSoldToday;
+    public int tenDayAverageVolume;
+
+    public boolean isHydrated = false;
 
     public void update(TickerMessage message){
         symbol = message.getSymbol();
+        messageTimestamp = message.getMessageTimestamp();
         openingPrice = message.getOpeningPrice();
         closingPrice = message.getPreviousClosingPrice();
         currentPrice = message.getCurrentPrice();
@@ -27,5 +32,10 @@ public class Stock extends Observable {
         askPrice = message.getAskPrice();
         volumeSoldToday = message.getCurrentVolume();
         tenDayAverageVolume = message.getAverageVolume();
+
+        isHydrated = true;
+
+        setChanged();
+        notifyObservers();
     }
 }

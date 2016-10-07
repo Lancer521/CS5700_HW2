@@ -9,7 +9,6 @@ import Display.MainDisplay;
 public class Main {
 
     public static void main(String[] args){
-        MainDisplay display = new MainDisplay();
-        display.configure();
+        new MainDisplay();
     }
 }
