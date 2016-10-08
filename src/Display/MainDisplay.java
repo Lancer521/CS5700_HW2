@@ -32,8 +32,11 @@ public class MainDisplay implements ActionListener {
     private JPanel displayPanel;
     private JButton displayButton;
     private JCheckBox basicTextDisplayCheckBox;
-    private JRadioButton closingRadioButton;
-    private JRadioButton openingRadioButton;
+    private JRadioButton basicTextClosingRB;
+    private JRadioButton basicTextOpeningRB;
+    private JCheckBox priceRangeDisplayCheckBox;
+    private JRadioButton priceRangeOpeningRB;
+    private JRadioButton priceRangeClosingRB;
 
     private Portfolio portfolio;
     private Map<String, String> companyMap;
@@ -42,7 +45,7 @@ public class MainDisplay implements ActionListener {
     private Communicator communicator;
     private FileManager fileManager;
 
-    private BasicTextDisplay display;
+    private List<Display> displays;
 
     public MainDisplay() {
         JFrame frame = new JFrame("Stock Monitoring System 5000");
@@ -57,8 +60,6 @@ public class MainDisplay implements ActionListener {
         portfolio = new Portfolio();
         communicator = new Communicator(portfolio);
         fileManager = new FileManager();
-
-        display = new BasicTextDisplay();
 
         loadPortfolioButton.addActionListener(this);
         savePortfolioButton.addActionListener(this);
@@ -86,9 +87,9 @@ public class MainDisplay implements ActionListener {
         } else if (e.getSource() == savePortfolioButton) {
             savePortfolio();
         } else if (e.getSource() == addButton) {
-            add();
+            addToPortfolio();
         } else if (e.getSource() == removeButton) {
-            remove();
+            removeFromPortfolio();
         } else if (e.getSource() == displayButton) {
             launchDisplays();
         }
@@ -102,7 +103,7 @@ public class MainDisplay implements ActionListener {
 
     }
 
-    private void add() {
+    private void addToPortfolio() {
         if (companyListModel.getSize() > 0) {
             String key = (String) companyList.getSelectedValue();
             if (key == null) {
@@ -113,7 +114,9 @@ public class MainDisplay implements ActionListener {
             Stock stock = new Stock();
             stock.symbol = companyMap.get(key);
             portfolio.put(stock.symbol, stock);
-            display.addStockToDisplay(stock);
+            if(displays != null && !displays.isEmpty()){
+                addStockToDisplays(stock);
+            }
 
             communicator.updatePortfolio(portfolio);
             communicator.beginTransfer();
@@ -123,7 +126,7 @@ public class MainDisplay implements ActionListener {
         }
     }
 
-    private void remove() {
+    private void removeFromPortfolio() {
         if (portfolioListModel.getSize() > 0) {
             String key = (String) portfolioList.getSelectedValue();
 
@@ -134,7 +137,7 @@ public class MainDisplay implements ActionListener {
 
             String symbol = companyMap.get(key);
             Stock stock = portfolio.remove(symbol);
-            display.removeStockFromDisplay(stock);
+            removeStockFromDisplays(stock);
 
             communicator.updatePortfolio(portfolio);
             if (portfolio.size() == 0) {
@@ -147,17 +150,36 @@ public class MainDisplay implements ActionListener {
     }
 
     private void launchDisplays() {
-        List<Display> displays = getDisplays();
-        for(Display display : displays){
-            display.display();
+        if(displays == null || displays.isEmpty()) {
+            displays = getDisplays();
+            for (Display display : displays) {
+                portfolio.values().forEach(display::addStockToDisplay);
+                display.display();
+            }
+        } else {
+            for(Display display : displays) {
+                display.display();
+            }
         }
     }
 
-    private void closeDisplays() {
-
+    private List<Display> getDisplays() {
+        return DisplayFactory.createDisplays(basicTextDisplayCheckBox.isSelected(), priceRangeDisplayCheckBox.isSelected());
     }
 
-    private List<Display> getDisplays() {
-        return DisplayFactory.createDisplays(basicTextDisplayCheckBox.isSelected());
+    private void addStockToDisplays(Stock stock){
+        for(Display display : displays){
+            if(display instanceof BasicTextDisplay){
+                display.addStockToDisplay(stock);
+            }
+        }
+    }
+
+    private void removeStockFromDisplays(Stock stock){
+        for(Display display : displays){
+            if(display instanceof BasicTextDisplay){
+                display.removeStockFromDisplay(stock);
+            }
+        }
     }
 }

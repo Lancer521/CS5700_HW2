@@ -58,12 +58,19 @@ public class BasicTextDisplay extends Display implements Observer {
         averageVolumeList.setModel(averageVolumeListModel);
     }
 
+    @Override
+    public void display() {
+        display(panelMain, "Basic Text Display");
+    }
+
+    @Override
     public void addStockToDisplay(Stock stock) {
         stock.addObserver(this);
 
         updateSymbolList(symbolListModel.getSize(), stock.symbol);
     }
 
+    @Override
     public void removeStockFromDisplay(Stock stock) {
         removeFromAllList(symbolListModel.indexOf(stock.symbol));
         stock.deleteObserver(this);
@@ -83,20 +90,6 @@ public class BasicTextDisplay extends Display implements Observer {
             e.printStackTrace();
         }
 
-    }
-
-    @Override
-    public void display() {
-        initializeWindow();
-    }
-
-    private void initializeWindow() {
-        JFrame frame = new JFrame("Stock Monitoring System 5000");
-        frame.setContentPane(panelMain);
-        frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        frame.pack();
-        frame.setFocusable(true);
-        frame.setVisible(true);
     }
 
     private void updateAllLists(int index, Stock stock){
