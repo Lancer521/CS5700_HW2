@@ -16,10 +16,4 @@ public class Portfolio extends HashMap<String, Stock> {
             stock.update(message);
         }
     }
-
-    public void add(String symbol){
-        Stock stock = new Stock();
-        stock.symbol = symbol;
-        this.put(symbol, stock);
-    }
 }

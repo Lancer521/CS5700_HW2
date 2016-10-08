@@ -1,14 +1,12 @@
 package Messages;
 
-import Utils.HelperFunctions;
+import Utils.HelperUtils;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.LinkedList;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-
-import static Utils.HelperFunctions.*;
 
 /**
  * Created by swc on 9/20/16.
@@ -39,7 +37,7 @@ public class StreamStocksMessage {
 
             for (String symbol : _symbols)
             {
-                String paddedSymbol = HelperFunctions.padRight(symbol,6);
+                String paddedSymbol = HelperUtils.padRight(symbol,6);
                 byte[] bytes = paddedSymbol.getBytes(StandardCharsets.US_ASCII);
                 buffer.put(bytes);
             }

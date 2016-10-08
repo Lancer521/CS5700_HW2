@@ -1,11 +1,9 @@
 package Display;
 
-import Data.Portfolio;
-import Data.SortedListModel;
 import Data.Stock;
+import Utils.HelperUtils;
 
 import javax.swing.*;
-import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -22,29 +20,53 @@ public class BasicTextDisplay extends Display implements Observer {
     private JList askPriceList;
     private JList volumeTodayList;
     private JList averageVolumeList;
+    private JLabel symbolLabel;
+    private JLabel closingPriceLabel;
+    private JLabel openingPriceLabel;
+    private JLabel currentPriceLabel;
+    private JLabel bidPriceLabel;
+    private JLabel askPriceLabel;
+    private JLabel volumeTodayLabel;
+    private JLabel AverageVolumeLabel;
 
-    private SortedListModel symbolListModel;
-    private SortedListModel closingPriceListModel;
-    private SortedListModel openingPriceListModel;
-    private SortedListModel currentPriceListModel;
-    private SortedListModel bidPriceListModel;
-    private SortedListModel askPriceListModel;
-    private SortedListModel volumeTodayListModel;
-    private SortedListModel averageVolumeListModel;
+    private DefaultListModel<Object> symbolListModel;
+    private DefaultListModel<Object> closingPriceListModel;
+    private DefaultListModel<Object> openingPriceListModel;
+    private DefaultListModel<Object> currentPriceListModel;
+    private DefaultListModel<Object> bidPriceListModel;
+    private DefaultListModel<Object> askPriceListModel;
+    private DefaultListModel<Object> volumeTodayListModel;
+    private DefaultListModel<Object> averageVolumeListModel;
 
     public BasicTextDisplay() {
-        symbolListModel = new SortedListModel();
+        symbolListModel = new DefaultListModel<>();
+        closingPriceListModel = new DefaultListModel<>();
+        openingPriceListModel = new DefaultListModel<>();
+        currentPriceListModel = new DefaultListModel<>();
+        bidPriceListModel = new DefaultListModel<>();
+        askPriceListModel = new DefaultListModel<>();
+        volumeTodayListModel = new DefaultListModel<>();
+        averageVolumeListModel = new DefaultListModel<>();
+
+        symbolList.setModel(symbolListModel);
+        closingPriceList.setModel(closingPriceListModel);
+        openingPriceList.setModel(openingPriceListModel);
+        currentPriceList.setModel(currentPriceListModel);
+        bidPriceList.setModel(bidPriceListModel);
+        askPriceList.setModel(askPriceListModel);
+        volumeTodayList.setModel(volumeTodayListModel);
+        averageVolumeList.setModel(averageVolumeListModel);
     }
 
     public void addStockToDisplay(Stock stock) {
         stock.addObserver(this);
 
-        symbolListModel.add(stock.symbol);
-        symbolList.setModel(symbolListModel);
+        updateSymbolList(symbolListModel.getSize(), stock.symbol);
     }
 
-    public void removeStockFromDisplay(Observable observable) {
-        observable.deleteObserver(this);
+    public void removeStockFromDisplay(Stock stock) {
+        removeFromAllList(symbolListModel.indexOf(stock.symbol));
+        stock.deleteObserver(this);
     }
 
     @Override
@@ -53,8 +75,10 @@ public class BasicTextDisplay extends Display implements Observer {
             if (!(o instanceof Stock)) {
                 throw new TypeNotPresentException("OBSERVABLE NOT A STOCK", new Throwable());
             }
-            Stock stock = (Stock) o;
-            // TODO: do stuff;
+            int index = symbolListModel.indexOf(((Stock) o).symbol);
+            if(index >= 0){
+                updateAllLists(index, (Stock) o);
+            }
         } catch (TypeNotPresentException | ClassCastException e) {
             e.printStackTrace();
         }
@@ -73,5 +97,82 @@ public class BasicTextDisplay extends Display implements Observer {
         frame.pack();
         frame.setFocusable(true);
         frame.setVisible(true);
+    }
+
+    private void updateAllLists(int index, Stock stock){
+        updateOpeningPriceList(index, stock.openingPrice);
+        updateClosingPriceList(index, stock.closingPrice);
+        updateCurrentPriceList(index, stock.currentPrice);
+        updateBidPriceList(index, stock.bidPrice);
+        updateAskPriceList(index, stock.askPrice);
+        updateVolumeTodayList(index, stock.volumeSoldToday);
+        updateAverageVolumeList(index, stock.tenDayAverageVolume);
+    }
+
+    private void updateSymbolList(int index, String symbol) {
+        if(symbol != null && !symbol.isEmpty()){
+            updateList(symbolListModel, index, symbol);
+        }
+    }
+
+    private void updateOpeningPriceList(int index, int openingPrice) {
+        if(openingPrice != HelperUtils.NOT_INITIALIZED){
+            updateList(openingPriceListModel, index, openingPrice);
+        }
+    }
+
+    private void updateClosingPriceList(int index, int closingPrice) {
+        if(closingPrice != HelperUtils.NOT_INITIALIZED){
+            updateList(closingPriceListModel, index, closingPrice);
+        }
+    }
+
+    private void updateCurrentPriceList(int index, int currentPrice) {
+        if(currentPrice != HelperUtils.NOT_INITIALIZED){
+            updateList(currentPriceListModel, index, currentPrice);
+        }
+    }
+
+    private void updateBidPriceList(int index, int bidPrice) {
+        if(bidPrice != HelperUtils.NOT_INITIALIZED){
+            updateList(bidPriceListModel, index, bidPrice);
+        }
+    }
+
+    private void updateAskPriceList(int index, int askPrice) {
+        if(askPrice != HelperUtils.NOT_INITIALIZED){
+            updateList(askPriceListModel, index, askPrice);
+        }
+    }
+
+    private void updateVolumeTodayList(int index, int volumeToday) {
+        if(volumeToday != HelperUtils.NOT_INITIALIZED){
+            updateList(volumeTodayListModel, index, volumeToday);
+        }
+    }
+
+    private void updateAverageVolumeList(int index, int averageVolume) {
+        if(averageVolume != HelperUtils.NOT_INITIALIZED){
+            updateList(averageVolumeListModel, index, averageVolume);
+        }
+    }
+
+    private void updateList(DefaultListModel<Object> listModel, int index, Object object) {
+        if(listModel.size() > index){
+            listModel.set(index, object);
+        } else {
+            listModel.addElement(object);
+        }
+    }
+
+    private void removeFromAllList(int index){
+        symbolListModel.removeElementAt(index);
+        openingPriceListModel.removeElementAt(index);
+        closingPriceListModel.removeElementAt(index);
+        currentPriceListModel.removeElementAt(index);
+        bidPriceListModel.removeElementAt(index);
+        askPriceListModel.removeElementAt(index);
+        volumeTodayListModel.removeElementAt(index);
+        averageVolumeListModel.removeElementAt(index);
     }
 }

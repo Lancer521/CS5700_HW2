@@ -1,6 +1,7 @@
 package Data;
 
 import Messages.TickerMessage;
+import Utils.HelperUtils;
 
 import java.util.Observable;
 
@@ -12,13 +13,13 @@ public class Stock extends Observable {
 
     public String symbol;
     public long messageTimestamp;
-    public int openingPrice;
-    public int closingPrice;
-    public int currentPrice;
-    public int bidPrice;
-    public int askPrice;
-    public int volumeSoldToday;
-    public int tenDayAverageVolume;
+    public int openingPrice = HelperUtils.NOT_INITIALIZED;
+    public int closingPrice = HelperUtils.NOT_INITIALIZED;
+    public int currentPrice = HelperUtils.NOT_INITIALIZED;
+    public int bidPrice = HelperUtils.NOT_INITIALIZED;
+    public int askPrice = HelperUtils.NOT_INITIALIZED;
+    public int volumeSoldToday = HelperUtils.NOT_INITIALIZED;
+    public int tenDayAverageVolume = HelperUtils.NOT_INITIALIZED;
 
     public boolean isHydrated = false;
 

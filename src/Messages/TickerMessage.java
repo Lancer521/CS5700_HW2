@@ -1,6 +1,6 @@
 package Messages;
 
-import Utils.HelperFunctions;
+import Utils.HelperUtils;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -106,7 +106,7 @@ public class TickerMessage {
             result = "";
         else
             result=symbol;
-        return HelperFunctions.padRight(result,6);
+        return HelperUtils.padRight(result,6);
     }
 
     public void setPaddedSymbol(String paddedSymbol) {
