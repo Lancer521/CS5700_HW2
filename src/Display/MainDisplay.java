@@ -6,6 +6,7 @@ import Data.Stock;
 import Data.SortedListModel;
 import Messages.Communicator;
 import Utils.FileManager;
+import Utils.JsonFileManager;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -59,7 +60,7 @@ public class MainDisplay implements ActionListener {
 
         portfolio = new Portfolio();
         communicator = new Communicator(portfolio);
-        fileManager = new FileManager();
+        fileManager = new JsonFileManager();
 
         loadPortfolioButton.addActionListener(this);
         savePortfolioButton.addActionListener(this);
