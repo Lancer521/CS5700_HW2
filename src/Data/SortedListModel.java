@@ -12,7 +12,7 @@ public class SortedListModel extends AbstractListModel {
     SortedSet<Object> model;
 
     public SortedListModel() {
-        model = new TreeSet<Object>();
+        model = new TreeSet<>();
     }
 
     public int getSize() {

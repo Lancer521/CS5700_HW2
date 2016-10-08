@@ -10,11 +10,11 @@ import Utils.FileManager;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 import java.util.Map;
 
 /**
  * Created by Ty on 10/3/2016 at 9:20 PM.
- *
  */
 public class MainDisplay implements ActionListener {
 
@@ -31,6 +31,9 @@ public class MainDisplay implements ActionListener {
     private JPanel portfolioPanel;
     private JPanel displayPanel;
     private JButton displayButton;
+    private JCheckBox basicTextDisplayCheckBox;
+    private JRadioButton closingRadioButton;
+    private JRadioButton openingRadioButton;
 
     private Portfolio portfolio;
     private Map<String, String> companyMap;
@@ -41,7 +44,7 @@ public class MainDisplay implements ActionListener {
 
     private BasicTextDisplay display;
 
-    public MainDisplay(){
+    public MainDisplay() {
         JFrame frame = new JFrame("Stock Monitoring System 5000");
         frame.setContentPane(panelMain);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -78,15 +81,15 @@ public class MainDisplay implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if(e.getSource() == loadPortfolioButton){
+        if (e.getSource() == loadPortfolioButton) {
             loadPortfolio();
-        } else if(e.getSource() == savePortfolioButton){
+        } else if (e.getSource() == savePortfolioButton) {
             savePortfolio();
-        } else if(e.getSource() == addButton){
+        } else if (e.getSource() == addButton) {
             add();
-        } else if(e.getSource() == removeButton){
+        } else if (e.getSource() == removeButton) {
             remove();
-        } else if(e.getSource() == displayButton){
+        } else if (e.getSource() == displayButton) {
             launchDisplays();
         }
     }
@@ -100,7 +103,7 @@ public class MainDisplay implements ActionListener {
     }
 
     private void add() {
-        if(companyListModel.getSize() > 0) {
+        if (companyListModel.getSize() > 0) {
             String key = (String) companyList.getSelectedValue();
             if (key == null) {
                 System.out.println("No item was selected to be added");
@@ -121,7 +124,7 @@ public class MainDisplay implements ActionListener {
     }
 
     private void remove() {
-        if(portfolioListModel.getSize() > 0) {
+        if (portfolioListModel.getSize() > 0) {
             String key = (String) portfolioList.getSelectedValue();
 
             if (key == null) {
@@ -134,7 +137,7 @@ public class MainDisplay implements ActionListener {
             display.removeStockFromDisplay(stock);
 
             communicator.updatePortfolio(portfolio);
-            if(portfolio.size() == 0){
+            if (portfolio.size() == 0) {
                 communicator.endTransfer();
             }
 
@@ -144,10 +147,17 @@ public class MainDisplay implements ActionListener {
     }
 
     private void launchDisplays() {
-        display.display();
+        List<Display> displays = getDisplays();
+        for(Display display : displays){
+            display.display();
+        }
     }
 
-    private void closeDisplays(){
+    private void closeDisplays() {
 
+    }
+
+    private List<Display> getDisplays() {
+        return DisplayFactory.createDisplays(basicTextDisplayCheckBox.isSelected());
     }
 }
