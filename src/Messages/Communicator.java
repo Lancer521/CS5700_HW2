@@ -15,7 +15,8 @@ public class Communicator {
 
     private DatagramSocket socket;
     private byte[] buffer = new byte[42];
-    private InetAddress socketAddress;
+    private SocketAddress socketAddress;
+    private static final String SERVER_IP = "52.37.77.101";
     private static final int PORT = 12099;
     private boolean isMonitoring;
     private Portfolio portfolio;
@@ -28,14 +29,10 @@ public class Communicator {
         this.portfolio = portfolio;
     }
 
-    public boolean isMonitoring(){
-        return isMonitoring;
-    }
-
     public void beginTransfer() {
         try {
             System.out.println("Transfer has begun");
-            socketAddress = InetAddress.getLocalHost();
+            socketAddress = new InetSocketAddress(SERVER_IP, PORT);
             socket = new DatagramSocket();
             Runnable task = () -> {
                 isMonitoring = true;
@@ -45,13 +42,15 @@ public class Communicator {
             thread.start();
 //            Executors.newSingleThreadExecutor().submit(task);
             System.out.println("TESTING");
-        } catch (SocketException | UnknownHostException e) {
+        } catch (SocketException e) {
             e.printStackTrace();
         }
     }
 
     public void endTransfer() {
         isMonitoring = false;
+        StreamStocksMessage endMessage = new StreamStocksMessage();
+        Send(endMessage);
         socket.close();
         System.out.println("Transfer ended");
     }
@@ -80,7 +79,7 @@ public class Communicator {
         if (message == null) return;
 
         byte[] bytesToSend = message.Encode();
-        DatagramPacket packet = new DatagramPacket(bytesToSend, bytesToSend.length, socketAddress, PORT);
+        DatagramPacket packet = new DatagramPacket(bytesToSend, bytesToSend.length, socketAddress);
 
         try {
             socket.send(packet);
