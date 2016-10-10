@@ -113,7 +113,7 @@ public class Communicator {
             packet = new DatagramPacket(buffer, buffer.length);
             socket.receive(packet);
         } catch (IOException e) {
-            e.printStackTrace();
+//            e.printStackTrace();
         }
         return packet;
     }

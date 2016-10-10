@@ -7,6 +7,7 @@ import Data.SortedListModel;
 import Messages.Communicator;
 import Utils.FileManager;
 import Utils.JsonFileManager;
+import org.jfree.ui.RefineryUtilities;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -53,6 +54,7 @@ public class MainDisplay implements ActionListener {
         frame.setContentPane(panelMain);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.pack();
+        RefineryUtilities.centerFrameOnScreen(frame);
 
         CompanyListUtil companyListUtil = new CompanyListUtil();
         companyMap = companyListUtil.getMap();
@@ -84,9 +86,11 @@ public class MainDisplay implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == loadPortfolioButton) {
-            loadPortfolio();
+            portfolio = fileManager.loadPortfolio("NOT_YET_NEEDED");
         } else if (e.getSource() == savePortfolioButton) {
-            savePortfolio();
+            if (portfolio != null && !portfolio.isEmpty()) {
+                fileManager.savePortfolio(portfolio);
+            }
         } else if (e.getSource() == addButton) {
             addToPortfolio();
         } else if (e.getSource() == removeButton) {
@@ -94,14 +98,6 @@ public class MainDisplay implements ActionListener {
         } else if (e.getSource() == displayButton) {
             launchDisplays();
         }
-    }
-
-    private void loadPortfolio() {
-
-    }
-
-    private void savePortfolio() {
-
     }
 
     private void addToPortfolio() {
@@ -115,7 +111,7 @@ public class MainDisplay implements ActionListener {
             Stock stock = new Stock();
             stock.symbol = companyMap.get(key);
             portfolio.put(stock.symbol, stock);
-            if(displays != null && !displays.isEmpty()){
+            if (displays != null && !displays.isEmpty()) {
                 addStockToDisplays(stock);
             }
 
@@ -151,14 +147,14 @@ public class MainDisplay implements ActionListener {
     }
 
     private void launchDisplays() {
-        if(displays == null || displays.isEmpty()) {
+        if (displays == null || displays.isEmpty()) {
             displays = getDisplays();
             for (Display display : displays) {
                 portfolio.values().forEach(display::addStockToDisplay);
                 display.display();
             }
         } else {
-            for(Display display : displays) {
+            for (Display display : displays) {
                 display.display();
             }
         }
@@ -168,17 +164,18 @@ public class MainDisplay implements ActionListener {
         return DisplayFactory.createDisplays(basicTextDisplayCheckBox.isSelected(), priceRangeDisplayCheckBox.isSelected());
     }
 
-    private void addStockToDisplays(Stock stock){
-        for(Display display : displays){
-            if(display instanceof BasicTextDisplay){
+    private void addStockToDisplays(Stock stock) {
+        for (Display display : displays) {
+            if (display instanceof BasicTextDisplay) {
                 display.addStockToDisplay(stock);
             }
         }
     }
 
-    private void removeStockFromDisplays(Stock stock){
-        for(Display display : displays){
-            if(display instanceof BasicTextDisplay){
+    private void removeStockFromDisplays(Stock stock) {
+        if (displays == null) return;
+        for (Display display : displays) {
+            if (display instanceof BasicTextDisplay) {
                 display.removeStockFromDisplay(stock);
             }
         }

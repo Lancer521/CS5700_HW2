@@ -11,8 +11,6 @@ import java.io.FileWriter;
  */
 public abstract class FileManager {
 
-    FileWriter fileWriter;
-
     public abstract void savePortfolio(Portfolio portfolio);
 
     public abstract Portfolio loadPortfolio(String filepath);
