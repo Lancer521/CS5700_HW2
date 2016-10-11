@@ -26,6 +26,7 @@ public class PriceRangeDisplay extends Display implements Observer {
     @Override
     public void display() {
         display(panelMain, "Price Range Display");
+        askRadioButton.setSelected(true);
     }
 
     @Override

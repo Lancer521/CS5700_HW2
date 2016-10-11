@@ -9,6 +9,7 @@ import java.util.Observer;
 
 /**
  * Created by Ty on 10/6/2016 at 12:59 PM at 4:53 PM.
+ *
  */
 public class BasicTextDisplay extends Display implements Observer {
     private JPanel panelMain;

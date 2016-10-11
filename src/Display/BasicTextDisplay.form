@@ -30,7 +30,8 @@
                   </grid>
                 </constraints>
                 <properties>
-                  <enabled value="false"/>
+                  <enabled value="true"/>
+                  <selectionBackground color="-1"/>
                 </properties>
               </component>
               <component id="58535" class="javax.swing.JList" binding="openingPriceList">
@@ -39,7 +40,9 @@
                     <minimum-size width="50" height="-1"/>
                   </grid>
                 </constraints>
-                <properties/>
+                <properties>
+                  <selectionBackground color="-1"/>
+                </properties>
               </component>
               <component id="3528e" class="javax.swing.JList" binding="symbolList">
                 <constraints>
@@ -47,7 +50,10 @@
                     <minimum-size width="50" height="-1"/>
                   </grid>
                 </constraints>
-                <properties/>
+                <properties>
+                  <selectionBackground color="-1"/>
+                  <selectionForeground color="-1"/>
+                </properties>
               </component>
               <component id="5d196" class="javax.swing.JList" binding="currentPriceList">
                 <constraints>
@@ -57,6 +63,7 @@
                 </constraints>
                 <properties>
                   <model/>
+                  <selectionBackground color="-1"/>
                 </properties>
               </component>
               <component id="fae34" class="javax.swing.JList" binding="bidPriceList">
@@ -67,6 +74,7 @@
                 </constraints>
                 <properties>
                   <enabled value="true"/>
+                  <selectionBackground color="-1"/>
                 </properties>
               </component>
               <component id="b1f5c" class="javax.swing.JList" binding="askPriceList">
@@ -87,6 +95,7 @@
                 </constraints>
                 <properties>
                   <enabled value="true"/>
+                  <selectionBackground color="-1"/>
                 </properties>
               </component>
               <component id="dc66e" class="javax.swing.JList" binding="averageVolumeList">
@@ -95,6 +104,7 @@
                 </constraints>
                 <properties>
                   <enabled value="true"/>
+                  <selectionBackground color="-1"/>
                 </properties>
               </component>
               <component id="3e1" class="javax.swing.JLabel" binding="symbolLabel">

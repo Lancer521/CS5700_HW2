@@ -2,9 +2,12 @@ package Utils;
 
 import Data.Portfolio;
 
+import Data.Stock;
 import com.google.gson.Gson;
 
 import java.io.*;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 /**
@@ -22,7 +25,8 @@ public class JsonFileManager extends FileManager {
 
     @Override
     public void savePortfolio(Portfolio portfolio) {
-        String json = gson.toJson(portfolio.values().toArray());
+        List<String> list = portfolio.values().stream().map(stock -> stock.symbol).collect(Collectors.toList());
+        String json = gson.toJson(list);
         try {
             PrintWriter writer = new PrintWriter(FILENAME);
             writer.print(json);
@@ -33,7 +37,7 @@ public class JsonFileManager extends FileManager {
     }
 
     @Override
-    public Portfolio loadPortfolio(String fileName) {
+    public Portfolio loadPortfolio() {
         String line;
         String result = "";
         try {
@@ -45,6 +49,13 @@ public class JsonFileManager extends FileManager {
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
-        return gson.fromJson(result, Portfolio.class);
+        List<String> list = gson.fromJson(result, List.class);
+        Portfolio p = new Portfolio();
+        for(String string : list){
+            Stock s = new Stock();
+            s.symbol = string;
+            p.put(string, s);
+        }
+        return p;
     }
 }

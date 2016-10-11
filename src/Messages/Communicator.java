@@ -31,7 +31,7 @@ public class Communicator {
 
     public void beginTransfer() {
         try {
-            System.out.println("Transfer has begun");
+            System.out.println("Transfer started");
             socketAddress = new InetSocketAddress(SERVER_IP, PORT);
             socket = new DatagramSocket();
             Runnable task = () -> {
@@ -41,7 +41,6 @@ public class Communicator {
             Thread thread = new Thread(task);
             thread.start();
 //            Executors.newSingleThreadExecutor().submit(task);
-            System.out.println("TESTING");
         } catch (SocketException e) {
             e.printStackTrace();
         }

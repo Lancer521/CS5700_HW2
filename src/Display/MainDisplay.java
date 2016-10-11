@@ -12,6 +12,8 @@ import org.jfree.ui.RefineryUtilities;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -86,7 +88,16 @@ public class MainDisplay implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == loadPortfolioButton) {
-            portfolio = fileManager.loadPortfolio("NOT_YET_NEEDED");
+            portfolio = fileManager.loadPortfolio();
+            for(Stock s : portfolio.values()){
+                List<String> cList = new ArrayList<>(companyMap.values());
+                int index = cList.indexOf(s.symbol);
+                List<String> pList = new ArrayList<>(companyMap.keySet());
+                String name = pList.get(index);
+
+                portfolioListModel.add(name);
+                companyListModel.removeElement(name);
+            }
         } else if (e.getSource() == savePortfolioButton) {
             if (portfolio != null && !portfolio.isEmpty()) {
                 fileManager.savePortfolio(portfolio);

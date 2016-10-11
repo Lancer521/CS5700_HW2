@@ -2,8 +2,6 @@ package Utils;
 
 import Data.Portfolio;
 
-import java.io.FileWriter;
-
 /**
  * Created by Ty on 9/23/2016 at 6:04 PM.
  *
@@ -13,5 +11,5 @@ public abstract class FileManager {
 
     public abstract void savePortfolio(Portfolio portfolio);
 
-    public abstract Portfolio loadPortfolio(String filepath);
+    public abstract Portfolio loadPortfolio();
 }
