@@ -1,11 +1,9 @@
-package Data;
+package Utils;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -14,10 +12,10 @@ import java.util.Map;
  */
 public class CompanyListUtil {
 
-    private Map<String, String> companyMap;
-    private boolean isInitialized = false;
+    private static Map<String, String> companyMap;
+    private static boolean isInitialized = false;
 
-    public Map<String, String> getMap(){
+    public static Map<String, String> getMap(){
         if(isInitialized){
             return companyMap;
         }
@@ -25,12 +23,12 @@ public class CompanyListUtil {
         return getMap("C:\\Users\\Ty\\Documents\\School\\Fall_2016\\CS5700\\HW2\\src\\CompanyList.csv");
     }
 
-    public Map<String, String> getMap(String filename){
+    public static Map<String, String> getMap(String filename){
         parseDataFromCSV(filename);
         return companyMap;
     }
 
-    private void parseDataFromCSV(String fileName) {
+    private static void parseDataFromCSV(String fileName) {
         String line;
         String[] array;
         companyMap = new HashMap<>();

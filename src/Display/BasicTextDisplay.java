@@ -4,6 +4,7 @@ import Data.Stock;
 import Utils.HelperUtils;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -29,34 +30,53 @@ public class BasicTextDisplay extends Display implements Observer {
     private JLabel askPriceLabel;
     private JLabel volumeTodayLabel;
     private JLabel AverageVolumeLabel;
+    private JList directionList;
 
     private DefaultListModel<Object> symbolListModel;
     private DefaultListModel<Object> closingPriceListModel;
     private DefaultListModel<Object> openingPriceListModel;
     private DefaultListModel<Object> currentPriceListModel;
+    private DefaultListModel<Object> directionListModel;
     private DefaultListModel<Object> bidPriceListModel;
     private DefaultListModel<Object> askPriceListModel;
     private DefaultListModel<Object> volumeTodayListModel;
     private DefaultListModel<Object> averageVolumeListModel;
 
-    public BasicTextDisplay() {
+    boolean openingRB;
+    boolean isDirectionUp;
+
+    @SuppressWarnings("all")
+    public BasicTextDisplay(boolean openingRB) {
+        this.openingRB = openingRB;
+        if(openingRB){
+            closingPriceList.setVisible(false);
+            closingPriceLabel.setVisible(false);
+            openingPriceListModel = new DefaultListModel<>();
+            openingPriceList.setModel(openingPriceListModel);
+        } else {
+            openingPriceList.setVisible(false);
+            openingPriceLabel.setVisible(false);
+            closingPriceListModel = new DefaultListModel<>();
+            closingPriceList.setModel(closingPriceListModel);
+        }
+
         symbolListModel = new DefaultListModel<>();
-        closingPriceListModel = new DefaultListModel<>();
-        openingPriceListModel = new DefaultListModel<>();
         currentPriceListModel = new DefaultListModel<>();
+        directionListModel = new DefaultListModel<>();
         bidPriceListModel = new DefaultListModel<>();
         askPriceListModel = new DefaultListModel<>();
         volumeTodayListModel = new DefaultListModel<>();
         averageVolumeListModel = new DefaultListModel<>();
 
         symbolList.setModel(symbolListModel);
-        closingPriceList.setModel(closingPriceListModel);
-        openingPriceList.setModel(openingPriceListModel);
         currentPriceList.setModel(currentPriceListModel);
+        directionList.setModel(directionListModel);
         bidPriceList.setModel(bidPriceListModel);
         askPriceList.setModel(askPriceListModel);
         volumeTodayList.setModel(volumeTodayListModel);
         averageVolumeList.setModel(averageVolumeListModel);
+
+//        directionList.setCellRenderer();
     }
 
     @Override
@@ -73,7 +93,7 @@ public class BasicTextDisplay extends Display implements Observer {
 
     @Override
     public void removeStockFromDisplay(Stock stock) {
-        removeFromAllList(symbolListModel.indexOf(stock.symbol));
+        removeFromAllLists(symbolListModel.indexOf(stock.symbol));
         stock.deleteObserver(this);
     }
 
@@ -84,6 +104,7 @@ public class BasicTextDisplay extends Display implements Observer {
                 throw new TypeNotPresentException("OBSERVABLE NOT A STOCK", new Throwable());
             }
             int index = symbolListModel.indexOf(((Stock) o).symbol);
+            isDirectionUp = getDirection((Stock) o);
             if(index >= 0){
                 updateAllLists(index, (Stock) o);
             }
@@ -93,9 +114,19 @@ public class BasicTextDisplay extends Display implements Observer {
 
     }
 
+    private boolean getDirection(Stock stock){
+        if(openingRB){
+            return stock.currentPrice > stock.openingPrice;
+        }
+        return stock.currentPrice > stock.closingPrice;
+    }
+
     private void updateAllLists(int index, Stock stock){
-        updateOpeningPriceList(index, stock.openingPrice);
-        updateClosingPriceList(index, stock.closingPrice);
+        if(openingRB){
+            updateOpeningPriceList(index, stock.openingPrice);
+        } else {
+            updateClosingPriceList(index, stock.closingPrice);
+        }
         updateCurrentPriceList(index, stock.currentPrice);
         updateBidPriceList(index, stock.bidPrice);
         updateAskPriceList(index, stock.askPrice);
@@ -159,14 +190,36 @@ public class BasicTextDisplay extends Display implements Observer {
         }
     }
 
-    private void removeFromAllList(int index){
+    private void removeFromAllLists(int index){
         symbolListModel.removeElementAt(index);
-        openingPriceListModel.removeElementAt(index);
-        closingPriceListModel.removeElementAt(index);
+        if(openingRB){
+            openingPriceListModel.removeElementAt(index);
+        } else {
+            closingPriceListModel.removeElementAt(index);
+        }
         currentPriceListModel.removeElementAt(index);
         bidPriceListModel.removeElementAt(index);
         askPriceListModel.removeElementAt(index);
         volumeTodayListModel.removeElementAt(index);
         averageVolumeListModel.removeElementAt(index);
+    }
+
+    private class ImageCellRenderer extends DefaultListCellRenderer{
+        @Override
+        public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+            JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+            Icon icon = getIcon();
+            label.setIcon(icon);
+            return label;
+        }
+
+        @Override
+        public Icon getIcon() {
+            if(isDirectionUp){
+                //return green arrow
+            }
+            //return red arrow
+            return super.getIcon();
+        }
     }
 }

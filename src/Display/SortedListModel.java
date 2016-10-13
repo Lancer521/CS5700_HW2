@@ -1,4 +1,4 @@
-package Data;
+package Display;
 
 import javax.swing.*;
 import java.util.*;

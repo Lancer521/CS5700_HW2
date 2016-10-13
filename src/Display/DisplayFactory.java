@@ -1,5 +1,8 @@
 package Display;
 
+import Data.Portfolio;
+import Data.Stock;
+
 import java.util.ArrayList;
 
 /**
@@ -9,13 +12,16 @@ import java.util.ArrayList;
  */
 public class DisplayFactory {
 
-    public static ArrayList<Display> createDisplays(boolean basicText, boolean priceRange) {
+    public static ArrayList<Display> createDisplays(boolean basicText, boolean openingRB, boolean priceRange, Portfolio portfolio, boolean graphAttempt, Stock stock) {
         ArrayList<Display> displays = new ArrayList<>();
         if (basicText) {
-            displays.add(new BasicTextDisplay());
+            displays.add(new BasicTextDisplay(openingRB));
         }
         if (priceRange) {
-            displays.add(new PriceRangeDisplay());
+            displays.add(new PriceRangeDisplay(portfolio));
+        }
+        if (graphAttempt) {
+            displays.add(new GraphAttempt(stock));
         }
         return displays;
     }

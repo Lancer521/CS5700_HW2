@@ -10,6 +10,7 @@ import java.nio.ByteOrder;
 
 /**
  * Created by swc on 9/20/16.
+ * *
  */
 public class StreamStocksMessage {
     private List<String> _symbols;

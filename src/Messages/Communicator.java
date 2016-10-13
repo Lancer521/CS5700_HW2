@@ -2,9 +2,7 @@ package Messages;
 
 import java.io.IOException;
 import java.net.*;
-import java.util.Map;
 
-import Data.Stock;
 import Data.Portfolio;
 
 /**
@@ -21,11 +19,15 @@ public class Communicator {
     private boolean isMonitoring;
     private Portfolio portfolio;
 
-    public Communicator(Portfolio portfolio){
+    public Communicator(Portfolio portfolio) {
         this.portfolio = portfolio;
     }
 
-    public void updatePortfolio(Portfolio portfolio){
+    public boolean isMonitoring() {
+        return isMonitoring;
+    }
+
+    public void updatePortfolio(Portfolio portfolio) {
         this.portfolio = portfolio;
     }
 
@@ -40,7 +42,6 @@ public class Communicator {
             };
             Thread thread = new Thread(task);
             thread.start();
-//            Executors.newSingleThreadExecutor().submit(task);
         } catch (SocketException e) {
             e.printStackTrace();
         }
@@ -49,7 +50,7 @@ public class Communicator {
     public void endTransfer() {
         isMonitoring = false;
         StreamStocksMessage endMessage = new StreamStocksMessage();
-        Send(endMessage);
+        send(endMessage);
         socket.close();
         System.out.println("Transfer ended");
     }
@@ -59,10 +60,8 @@ public class Communicator {
         if (portfolio == null) return;
 
         StreamStocksMessage startMessage = new StreamStocksMessage();
-        for (Map.Entry<String, Stock> entry : portfolio.entrySet()) {
-            startMessage.Add(entry.getKey());
-        }
-        Send(startMessage);
+        portfolio.keySet().forEach(startMessage::Add);
+        send(startMessage);
 
         while (isMonitoring) {
             TickerMessage message = receiveTicker(1000);
@@ -74,7 +73,7 @@ public class Communicator {
         }
     }
 
-    private void Send(StreamStocksMessage message) {
+    private void send(StreamStocksMessage message) {
         if (message == null) return;
 
         byte[] bytesToSend = message.Encode();

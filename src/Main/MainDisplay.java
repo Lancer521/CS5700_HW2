@@ -1,9 +1,12 @@
-package Display;
+package Main;
 
-import Data.CompanyListUtil;
+import Display.Display;
+import Display.BasicTextDisplay;
+import Display.SortedListModel;
+import Display.DisplayFactory;
+import Utils.CompanyListUtil;
 import Data.Portfolio;
 import Data.Stock;
-import Data.SortedListModel;
 import Messages.Communicator;
 import Utils.FileManager;
 import Utils.JsonFileManager;
@@ -13,12 +16,12 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 /**
  * Created by Ty on 10/3/2016 at 9:20 PM.
+ * *
  */
 public class MainDisplay implements ActionListener {
 
@@ -39,8 +42,6 @@ public class MainDisplay implements ActionListener {
     private JRadioButton basicTextClosingRB;
     private JRadioButton basicTextOpeningRB;
     private JCheckBox priceRangeDisplayCheckBox;
-    private JRadioButton priceRangeOpeningRB;
-    private JRadioButton priceRangeClosingRB;
 
     private Portfolio portfolio;
     private Map<String, String> companyMap;
@@ -50,6 +51,10 @@ public class MainDisplay implements ActionListener {
     private FileManager fileManager;
 
     private List<Display> displays;
+
+    public static void main(String[] args) {
+        new MainDisplay();
+    }
 
     public MainDisplay() {
         JFrame frame = new JFrame("Stock Monitoring System 5000");
@@ -72,6 +77,8 @@ public class MainDisplay implements ActionListener {
         removeButton.addActionListener(this);
         displayButton.addActionListener(this);
 
+        basicTextOpeningRB.setSelected(true);
+
         frame.setVisible(true);
     }
 
@@ -89,7 +96,7 @@ public class MainDisplay implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == loadPortfolioButton) {
             portfolio = fileManager.loadPortfolio();
-            for(Stock s : portfolio.values()){
+            for (Stock s : portfolio.values()) {
                 List<String> cList = new ArrayList<>(companyMap.values());
                 int index = cList.indexOf(s.symbol);
                 List<String> pList = new ArrayList<>(companyMap.keySet());
@@ -158,21 +165,20 @@ public class MainDisplay implements ActionListener {
     }
 
     private void launchDisplays() {
-        if (displays == null || displays.isEmpty()) {
-            displays = getDisplays();
-            for (Display display : displays) {
-                portfolio.values().forEach(display::addStockToDisplay);
-                display.display();
-            }
-        } else {
-            for (Display display : displays) {
-                display.display();
-            }
+        displays = getDisplays();
+        for (Display display : displays) {
+            portfolio.values().forEach(display::addStockToDisplay);
+            display.display();
+        }
+        if (!communicator.isMonitoring()) {
+            communicator.beginTransfer();
         }
     }
 
     private List<Display> getDisplays() {
-        return DisplayFactory.createDisplays(basicTextDisplayCheckBox.isSelected(), priceRangeDisplayCheckBox.isSelected());
+        return DisplayFactory.createDisplays(basicTextDisplayCheckBox.isSelected(), basicTextOpeningRB.isSelected(),
+                priceRangeDisplayCheckBox.isSelected(), portfolio,
+                true, portfolio.get("GOOGL"));
     }
 
     private void addStockToDisplays(Stock stock) {
