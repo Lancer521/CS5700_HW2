@@ -12,7 +12,7 @@ import java.util.ArrayList;
  */
 public class DisplayFactory {
 
-    public static ArrayList<Display> createDisplays(boolean basicText, boolean openingRB, boolean priceRange, Portfolio portfolio, boolean graphAttempt, Stock stock) {
+    public static ArrayList<Display> createDisplays(boolean basicText, boolean openingRB, boolean priceRange, Portfolio portfolio, boolean stockPrice, Stock priceStock, boolean stockVolume, Stock volumeStock) {
         ArrayList<Display> displays = new ArrayList<>();
         if (basicText) {
             displays.add(new BasicTextDisplay(openingRB));
@@ -20,8 +20,11 @@ public class DisplayFactory {
         if (priceRange) {
             displays.add(new PriceRangeDisplay(portfolio));
         }
-        if (graphAttempt) {
-            displays.add(new GraphAttempt(stock));
+        if (stockPrice) {
+            displays.add(new IndividualStockPriceDisplay(priceStock));
+        }
+        if (stockVolume) {
+            displays.add(new IndividualStockVolumeDisplay(volumeStock));
         }
         return displays;
     }

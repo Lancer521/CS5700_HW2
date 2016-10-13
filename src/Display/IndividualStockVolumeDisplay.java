@@ -4,11 +4,8 @@ import Data.Stock;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartFrame;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.plot.Plot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
-import org.jfree.data.Range;
 import org.jfree.data.xy.XYDataItem;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
@@ -22,7 +19,7 @@ import java.util.Observer;
  * Created by Ty on 10/9/2016 at 8:33 PM.
  * *
  */
-public class GraphAttempt extends Display implements Observer {
+public class IndividualStockVolumeDisplay extends Display implements Observer {
 
     private XYDataset dataset;
     private XYSeries series;
@@ -33,16 +30,16 @@ public class GraphAttempt extends Display implements Observer {
     private int maxValue;
     private int counter = 120;
 
-    public GraphAttempt(Stock stock) {
+    public IndividualStockVolumeDisplay(Stock stock) {
         dataset = createDataSet();
         addStockToDisplay(stock);
-        chart = ChartFactory.createXYLineChart(stock.symbol, "", "", dataset, PlotOrientation.VERTICAL, false, false, false);
+        chart = ChartFactory.createXYLineChart(stock.symbol + " - Volume", "", "", dataset, PlotOrientation.VERTICAL, false, false, false);
         frame = new ChartFrame("Title", chart);
         plot = chart.getXYPlot();
         plot.getRangeAxis().setVisible(false);
         plot.getDomainAxis().setVisible(false);
-        minValue = stock.currentPrice - 5;
-        maxValue = stock.currentPrice + 5;
+        minValue = stock.volumeSoldToday - 5;
+        maxValue = stock.volumeSoldToday + 5;
     }
 
     @Override
@@ -67,14 +64,14 @@ public class GraphAttempt extends Display implements Observer {
             counter = 0;
             Stock stock = (Stock) o;
             if (series.getItemCount() < 60) {
-                series.add(series.getItemCount(), stock.currentPrice);
+                series.add(series.getItemCount(), stock.volumeSoldToday);
             } else {
                 updateFullGraph(stock);
             }
-            if (stock.currentPrice < minValue) {
-                minValue = stock.currentPrice;
-            } else if (stock.currentPrice > maxValue) {
-                maxValue = stock.currentPrice;
+            if (stock.volumeSoldToday < minValue) {
+                minValue = stock.volumeSoldToday;
+            } else if (stock.volumeSoldToday > maxValue) {
+                maxValue = stock.volumeSoldToday;
             }
             plot.getRangeAxis().setRange(minValue, maxValue);
         }
@@ -88,7 +85,7 @@ public class GraphAttempt extends Display implements Observer {
             series.clear();
             series.add(item.getXValue() - 1, item.getYValue());
         }
-        series.add(59, stock.currentPrice);
+        series.add(59, stock.volumeSoldToday);
     }
 
     public XYDataset createDataSet() {

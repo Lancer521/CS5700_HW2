@@ -42,8 +42,10 @@ public class MainDisplay implements ActionListener {
     private JRadioButton basicTextClosingRB;
     private JRadioButton basicTextOpeningRB;
     private JCheckBox priceRangeDisplayCheckBox;
-    private JComboBox individualStockCB;
-    private JCheckBox individualStockCheckBox;
+    private JComboBox stockPriceComboBox;
+    private JCheckBox stockVolumeCheckBox;
+    private JCheckBox stockPriceCheckBox;
+    private JComboBox stockVolumeComboBox;
 
     private Portfolio portfolio;
     private Map<String, String> companyMap;
@@ -53,7 +55,8 @@ public class MainDisplay implements ActionListener {
     private FileManager fileManager;
 
     private List<Display> displays;
-    private DefaultComboBoxModel<String> comboBoxModel;
+    private DefaultComboBoxModel<String> priceComboBoxModel;
+    private DefaultComboBoxModel<String> volumeComboBoxModel;
 
     public static void main(String[] args) {
         new MainDisplay();
@@ -80,8 +83,10 @@ public class MainDisplay implements ActionListener {
         removeButton.addActionListener(this);
         displayButton.addActionListener(this);
 
-        comboBoxModel = new DefaultComboBoxModel<>();
-        individualStockCB.setModel(comboBoxModel);
+        priceComboBoxModel = new DefaultComboBoxModel<>();
+        volumeComboBoxModel = new DefaultComboBoxModel<>();
+        stockPriceComboBox.setModel(priceComboBoxModel);
+        stockVolumeComboBox.setModel(volumeComboBoxModel);
 
         basicTextOpeningRB.setSelected(true);
 
@@ -144,7 +149,8 @@ public class MainDisplay implements ActionListener {
 
             companyListModel.removeElement(key);
             portfolioListModel.add(key);
-            comboBoxModel.addElement(stock.symbol);
+            priceComboBoxModel.addElement(stock.symbol);
+            volumeComboBoxModel.addElement(stock.symbol);
         }
     }
 
@@ -168,7 +174,8 @@ public class MainDisplay implements ActionListener {
 
             portfolioListModel.removeElement(key);
             companyListModel.add(key);
-            comboBoxModel.removeElement(stock.symbol);
+            priceComboBoxModel.removeElement(stock.symbol);
+            volumeComboBoxModel.removeElement(stock.symbol);
         }
     }
 
@@ -184,10 +191,12 @@ public class MainDisplay implements ActionListener {
     }
 
     private List<Display> getDisplays() {
-        Stock individualStock = portfolio.get((String) individualStockCB.getSelectedItem());
+        Stock priceStock = portfolio.get((String) stockPriceComboBox.getSelectedItem());
+        Stock volumeStock = portfolio.get((String) stockVolumeComboBox.getSelectedItem());
         return DisplayFactory.createDisplays(basicTextDisplayCheckBox.isSelected(), basicTextOpeningRB.isSelected(),
                 priceRangeDisplayCheckBox.isSelected(), portfolio,
-                individualStockCheckBox.isSelected(), individualStock);
+                stockPriceCheckBox.isSelected(), priceStock,
+                stockVolumeCheckBox.isSelected(), volumeStock);
     }
 
     private void addStockToDisplays(Stock stock) {
