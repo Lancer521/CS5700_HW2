@@ -65,10 +65,8 @@ public class PriceRangeDisplay extends Display implements Observer, ActionListen
     public void update(Observable o, Object arg) {
         if (askRadioButton.isSelected()) {
             updateStockByRange(((Stock) o).askPrice, ((Stock) o).symbol);
-            System.out.println("ASK PRICE");
         } else {
             updateStockByRange(((Stock) o).bidPrice, ((Stock) o).symbol);
-            System.out.println("BID PRICE");
         }
     }
 
