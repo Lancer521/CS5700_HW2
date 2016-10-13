@@ -1,7 +1,7 @@
 package Main;
 
 import Display.Display;
-import Display.BasicTextDisplay;
+import Display.PortfolioStockDisplay;
 import Display.SortedListModel;
 import Display.DisplayFactory;
 import Utils.CompanyListUtil;
@@ -201,7 +201,7 @@ public class MainDisplay implements ActionListener {
 
     private void addStockToDisplays(Stock stock) {
         for (Display display : displays) {
-            if (display instanceof BasicTextDisplay) {
+            if (display instanceof PortfolioStockDisplay) {
                 display.addStockToDisplay(stock);
             }
         }
@@ -210,7 +210,7 @@ public class MainDisplay implements ActionListener {
     private void removeStockFromDisplays(Stock stock) {
         if (displays == null) return;
         for (Display display : displays) {
-            if (display instanceof BasicTextDisplay) {
+            if (display instanceof PortfolioStockDisplay) {
                 display.removeStockFromDisplay(stock);
             }
         }

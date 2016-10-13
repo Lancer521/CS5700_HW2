@@ -15,7 +15,7 @@ public class DisplayFactory {
     public static ArrayList<Display> createDisplays(boolean basicText, boolean openingRB, boolean priceRange, Portfolio portfolio, boolean stockPrice, Stock priceStock, boolean stockVolume, Stock volumeStock) {
         ArrayList<Display> displays = new ArrayList<>();
         if (basicText) {
-            displays.add(new BasicTextDisplay(openingRB));
+            displays.add(new PortfolioStockDisplay(openingRB));
         }
         if (priceRange) {
             displays.add(new PriceRangeDisplay(portfolio));
